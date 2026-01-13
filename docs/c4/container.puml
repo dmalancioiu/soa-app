@@ -1,0 +1,29 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Person(user, "Shopper")
+
+System_Boundary(novamart, "NovaMart") {
+  Container(webapp, "Web UI", "React + Vite", "Shell with catalog and orders micro-frontends")
+  Container(gateway, "API Gateway", "Spring Boot", "Secured REST endpoints")
+  Container(catalog, "Catalog Service", "Spring Boot", "Catalog data + RabbitMQ consumer")
+  Container(order, "Order Service", "Spring Boot", "Publishes order events")
+  Container(notification, "Notification Service", "Spring Boot", "WebSocket notifications")
+  Container(rabbit, "RabbitMQ", "AMQP", "Command queue")
+  Container(kafka, "Kafka", "Event Streaming", "Order events")
+  Container(lambda, "FaaS", "LocalStack Lambda", "Order recommendations")
+  ContainerDb(mysql, "MySQL", "Local", "Operational data")
+}
+
+Rel(user, webapp, "Uses", "HTTPS")
+Rel(webapp, gateway, "Calls", "REST + JWT")
+Rel(webapp, notification, "Subscribes", "WebSocket/STOMP")
+Rel(gateway, catalog, "Fetches catalog", "REST")
+Rel(gateway, order, "Creates orders", "REST")
+Rel(order, rabbit, "Publishes", "AMQP")
+Rel(order, kafka, "Publishes", "Kafka")
+Rel(notification, kafka, "Consumes", "Kafka")
+Rel(gateway, lambda, "Invokes", "AWS SDK")
+Rel(catalog, mysql, "Reads/Writes", "JDBC")
+Rel(order, mysql, "Reads/Writes", "JDBC")
+@enduml

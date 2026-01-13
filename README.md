@@ -14,14 +14,25 @@ The system is containerized and designed to run in Docker, while MySQL remains l
 
 ## Running locally
 1. Start MySQL on your host and create a database named `novamart`.
-2. Set `MYSQL_HOST` to your host IP (e.g., `host.docker.internal` on macOS/Windows).
-3. Start the stack:
+2. Export the host IP for containers to reach MySQL:
+   - macOS/Windows:
+     ```bash
+     export MYSQL_HOST=host.docker.internal
+     ```
+   - Linux (replace with your host IP on the Docker bridge, often `172.17.0.1`):
+     ```bash
+     export MYSQL_HOST=172.17.0.1
+     ```
+3. Build and start the stack:
 
 ```bash
 docker compose up --build
 ```
 
 4. Open `http://localhost:8080`.
+5. Authenticate via the API or the UI using:
+   - username: `demo`
+   - password: `demo123`
 
 ## Services and ports
 - Nginx: 8080
@@ -35,3 +46,13 @@ docker compose up --build
 
 ## Documentation
 See `docs/uml` and `docs/c4` for diagrams and models.
+
+## Troubleshooting Docker builds
+- If Docker reports `input/output error` while building, try cleaning BuildKit cache:
+  ```bash
+  docker builder prune -f
+  ```
+- If Maven fails with `ClassFormatError`, clear cached layers and rebuild:
+  ```bash
+  docker compose build --no-cache
+  ```

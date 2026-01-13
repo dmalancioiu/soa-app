@@ -1,0 +1,21 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+Person(user, "Shopper", "Uses NovaMart")
+
+System_Boundary(novamart, "NovaMart") {
+  System(webapp, "Web Application", "React micro-frontends")
+  System(gateway, "API Gateway", "Secured REST API")
+  System(catalog, "Catalog Service", "Product availability")
+  System(order, "Order Service", "Order management")
+  System(notify, "Notification Service", "WebSocket notifications")
+  System(faas, "FaaS", "LocalStack Lambda")
+}
+
+Rel(user, webapp, "Browses and places orders")
+Rel(webapp, gateway, "Calls secured REST")
+Rel(webapp, notify, "Subscribes WebSocket")
+Rel(gateway, catalog, "Reads catalog")
+Rel(gateway, order, "Creates orders")
+Rel(order, faas, "Invokes recommendation function")
+@enduml

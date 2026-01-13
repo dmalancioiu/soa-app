@@ -1,0 +1,22 @@
+@startuml
+actor User
+
+rectangle "NovaMart UI" as UI
+rectangle "API Gateway" as Gateway
+rectangle "Catalog Service" as Catalog
+rectangle "Order Service" as Orders
+rectangle "Notification Service" as Notifications
+rectangle "RabbitMQ" as Rabbit
+rectangle "Kafka" as Kafka
+rectangle "LocalStack Lambda" as Lambda
+
+User --> UI : Uses web app
+UI --> Gateway : Secured REST
+UI --> Notifications : WebSocket
+Gateway --> Catalog : REST
+Gateway --> Orders : REST
+Orders --> Rabbit : Order commands
+Orders --> Kafka : Order events
+Notifications --> Kafka : Subscribe events
+Gateway --> Lambda : Invoke FaaS
+@enduml
